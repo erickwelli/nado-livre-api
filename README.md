@@ -1,16 +1,15 @@
-# Nado Livre — API de Controle de Toalhas
+# Nado Livre API
 
-API desenvolvida para o controle de retirada e devolução de toalhas em uma escola de natação.
+API desenvolvida para o controle de toalhas de uma escola de natação, permitindo o cadastro de usuários, funcionários, nadadores e toalhas, além do registro e consulta de movimentações.
 
-## Tecnologias utilizadas
+## Tecnologias
 
 * Python
 * Flask
 * Flask-SQLAlchemy
-* SQLite
 * Marshmallow
+* SQLite
 * Postman
-* Git/GitHub
 
 ## Como executar
 
@@ -18,21 +17,16 @@ API desenvolvida para o controle de retirada e devolução de toalhas em uma esc
 
 ```bash
 git clone https://github.com/erickwelli/nado-livre-api.git
-```
-
-### 2. Entrar na pasta do projeto
-
-```bash
 cd nado-livre-api
 ```
 
-### 3. Criar o ambiente virtual
+### 2. Criar o ambiente virtual
 
 ```bash
 python -m venv venv
 ```
 
-### 4. Ativar o ambiente virtual
+### 3. Ativar o ambiente virtual
 
 No Windows:
 
@@ -40,13 +34,13 @@ No Windows:
 venv\Scripts\activate
 ```
 
-### 5. Instalar as dependências
+### 4. Instalar as dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 6. Executar a API
+### 5. Executar a API
 
 ```bash
 python app.py
@@ -54,91 +48,62 @@ python app.py
 
 A API estará disponível em:
 
-```text
-http://127.0.0.1:5000
-```
+`http://127.0.0.1:5000`
 
-## Testando a API
+O banco de dados utilizado é o SQLite e é criado automaticamente na pasta `instance/`.
 
-A API pode ser testada utilizando o Postman.
+## Endpoints principais
 
-Para requisições `POST` que necessitam de dados, selecione:
+| Método | Endpoint                        | Função                         |
+| ------ | ------------------------------- | ------------------------------ |
+| POST   | `/usuarios`                     | Cadastrar usuário              |
+| GET    | `/usuarios`                     | Listar usuários                |
+| GET    | `/usuarios/<id>`                | Buscar usuário                 |
+| POST   | `/funcionarios`                 | Cadastrar funcionário          |
+| GET    | `/funcionarios`                 | Listar funcionários            |
+| GET    | `/funcionarios/<id>`            | Buscar funcionário             |
+| POST   | `/nadadores`                    | Cadastrar nadador              |
+| GET    | `/nadadores`                    | Listar nadadores               |
+| GET    | `/nadadores/<id>`               | Buscar nadador                 |
+| POST   | `/toalhas`                      | Cadastrar toalha               |
+| GET    | `/toalhas`                      | Listar toalhas                 |
+| GET    | `/toalhas/<id>`                 | Buscar toalha                  |
+| GET    | `/toalhas/disponiveis`          | Listar toalhas disponíveis     |
+| GET    | `/toalhas/em-uso`               | Listar toalhas em uso          |
+| POST   | `/movimentacoes`                | Registrar retirada             |
+| GET    | `/movimentacoes`                | Listar movimentações           |
+| GET    | `/movimentacoes/<id>`           | Buscar movimentação            |
+| PUT    | `/movimentacoes/<id>/devolucao` | Registrar devolução            |
+| GET    | `/movimentacoes/em-aberto`      | Listar movimentações em aberto |
+| GET    | `/toalhas/<id>/historico`       | Consultar histórico da toalha  |
+
+## Dados necessários para cadastro
+
+* **Usuário:** nome, CPF, telefone e e-mail.
+* **Funcionário:** ID do usuário.
+* **Nadador:** ID do usuário.
+* **Toalha:** código. Ex: (T001)
+* **Movimentação:** ID do funcionário, ID do nadador e ID da toalha.
+* **Devolução:** não possui dados no Body; utiliza o ID da movimentação na URL.
+
+## Testes com Postman
+
+Para as requisições `POST`, utilizar:
 
 **Body → raw → JSON**
 
-e informe os campos necessários para cada endpoint.
-
-## Principais endpoints
-
-### Usuários
-
-| Método | Endpoint         | Função            |
-| ------ | ---------------- | ----------------- |
-| POST   | `/usuarios`      | Cadastrar usuário |
-| GET    | `/usuarios`      | Listar usuários   |
-| GET    | `/usuarios/<id>` | Buscar usuário    |
-
-### Funcionários
-
-| Método | Endpoint             | Função                |
-| ------ | -------------------- | --------------------- |
-| POST   | `/funcionarios`      | Cadastrar funcionário |
-| GET    | `/funcionarios`      | Listar funcionários   |
-| GET    | `/funcionarios/<id>` | Buscar funcionário    |
-
-### Nadadores
-
-| Método | Endpoint          | Função            |
-| ------ | ----------------- | ----------------- |
-| POST   | `/nadadores`      | Cadastrar nadador |
-| GET    | `/nadadores`      | Listar nadadores  |
-| GET    | `/nadadores/<id>` | Buscar nadador    |
-
-### Toalhas
-
-| Método | Endpoint               | Função                        |
-| ------ | ---------------------- | ----------------------------- |
-| POST   | `/toalhas`             | Cadastrar toalha              |
-| GET    | `/toalhas`             | Listar toalhas                |
-| GET    | `/toalhas/<id>`        | Buscar toalha                 |
-| GET    | `/toalhas/disponiveis` | Consultar toalhas disponíveis |
-| GET    | `/toalhas/em-uso`      | Consultar toalhas em uso      |
-
-### Movimentações
-
-| Método | Endpoint                        | Função                            |
-| ------ | ------------------------------- | --------------------------------- |
-| POST   | `/movimentacoes`                | Registrar retirada                |
-| GET    | `/movimentacoes`                | Listar movimentações              |
-| GET    | `/movimentacoes/<id>`           | Buscar movimentação               |
-| PUT    | `/movimentacoes/<id>/devolucao` | Registrar devolução               |
-| GET    | `/movimentacoes/em-aberto`      | Consultar movimentações em aberto |
-| GET    | `/toalhas/<id>/historico`       | Consultar histórico da toalha     |
-
-## Banco de dados
-
-O sistema utiliza **SQLite** como banco de dados.
-
-O banco é criado automaticamente pela aplicação quando ela é executada.
+Os IDs utilizados nas requisições devem corresponder aos registros existentes no banco de dados.
 
 ## Funcionalidades
 
-O sistema permite:
+* Cadastro de usuários, funcionários e nadadores.
+* Cadastro e consulta de toalhas.
+* Controle do status das toalhas.
+* Registro de retirada e devolução.
+* Bloqueio de retirada de toalhas que já estão em uso.
+* Consulta de toalhas disponíveis e em uso.
+* Histórico de movimentações.
 
-* Cadastrar usuários;
-* Cadastrar funcionários;
-* Cadastrar nadadores;
-* Cadastrar toalhas;
-* Consultar toalhas disponíveis e em uso;
-* Registrar retirada de toalhas;
-* Registrar devolução de toalhas;
-* Impedir que uma toalha em uso seja retirada novamente;
-* Consultar movimentações;
-* Consultar movimentações em aberto;
-* Consultar o histórico de uma toalha.
+## Projeto acadêmico
 
-## Projeto
-
-**Nado Livre — Controle de Toalhas em uma Escola de Natação**
-
-Projeto desenvolvido como atividade acadêmica.
+Projeto desenvolvido como atividade acadêmica para simulação do desenvolvimento de uma API.
