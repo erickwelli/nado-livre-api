@@ -16,11 +16,20 @@ nadadores_schema = NadadorSchema(many=True)
 def cadastrar_nadador():
     dados = request.get_json()
 
-    if not dados or "id_usuario" not in dados:
-        return {"erro": "id_usuario é obrigatório"}, 400
+    if not dados:
+        return {"erro": "Dados são obrigatórios"}, 400
+
+    campos_obrigatorios = ["nome", "cpf", "telefone", "email"]
+
+    for campo in campos_obrigatorios:
+        if campo not in dados:
+            return {"erro": f"{campo} é obrigatório"}, 400
 
     nadador, erro = criar_nadador(
-        dados["id_usuario"]
+        dados["nome"],
+        dados["cpf"],
+        dados["telefone"],
+        dados["email"]
     )
 
     if erro:

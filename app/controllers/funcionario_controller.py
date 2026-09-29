@@ -3,17 +3,26 @@ from app.models.funcionario import Funcionario
 from app.models.usuario import Usuario
 
 
-def criar_funcionario(id_usuario):
-    usuario = Usuario.query.get(id_usuario)
+def criar_funcionario(nome, cpf, telefone, email):
+    usuario = Usuario.query.filter(
+        (Usuario.cpf == cpf) | (Usuario.email == email)
+    ).first()
 
-    if not usuario:
-        return None, "Usuário não encontrado"
+    if usuario:
+        return None, "CPF ou e-mail já cadastrado"
 
-    if usuario.funcionario:
-        return None, "Usuário já está cadastrado como funcionário"
+    usuario = Usuario(
+        nome=nome,
+        cpf=cpf,
+        telefone=telefone,
+        email=email
+    )
+
+    db.session.add(usuario)
+    db.session.flush()
 
     funcionario = Funcionario(
-        id_funcionario=id_usuario
+        id_funcionario=usuario.id_usuario
     )
 
     db.session.add(funcionario)

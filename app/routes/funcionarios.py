@@ -16,11 +16,20 @@ funcionarios_schema = FuncionarioSchema(many=True)
 def cadastrar_funcionario():
     dados = request.get_json()
 
-    if not dados or "id_usuario" not in dados:
-        return {"erro": "id_usuario é obrigatório"}, 400
+    if not dados:
+        return {"erro": "Dados são obrigatórios"}, 400
+
+    campos_obrigatorios = ["nome", "cpf", "telefone", "email"]
+
+    for campo in campos_obrigatorios:
+        if campo not in dados:
+            return {"erro": f"{campo} é obrigatório"}, 400
 
     funcionario, erro = criar_funcionario(
-        dados["id_usuario"]
+        dados["nome"],
+        dados["cpf"],
+        dados["telefone"],
+        dados["email"]
     )
 
     if erro:

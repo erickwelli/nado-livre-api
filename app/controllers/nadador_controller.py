@@ -3,17 +3,26 @@ from app.models.nadador import Nadador
 from app.models.usuario import Usuario
 
 
-def criar_nadador(id_usuario):
-    usuario = Usuario.query.get(id_usuario)
+def criar_nadador(nome, cpf, telefone, email):
+    usuario = Usuario.query.filter(
+        (Usuario.cpf == cpf) | (Usuario.email == email)
+    ).first()
 
-    if not usuario:
-        return None, "Usuário não encontrado"
+    if usuario:
+        return None, "CPF ou e-mail já cadastrado"
 
-    if usuario.nadador:
-        return None, "Usuário já está cadastrado como nadador"
+    usuario = Usuario(
+        nome=nome,
+        cpf=cpf,
+        telefone=telefone,
+        email=email
+    )
+
+    db.session.add(usuario)
+    db.session.flush()
 
     nadador = Nadador(
-        id_nadador=id_usuario
+        id_nadador=usuario.id_usuario
     )
 
     db.session.add(nadador)
