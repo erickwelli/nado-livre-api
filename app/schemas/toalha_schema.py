@@ -2,10 +2,9 @@ from marshmallow import Schema, fields
 
 
 class ToalhaSchema(Schema):
-    id_toalha = fields.Int(dump_only=True)
-
+    id = fields.Int(attribute="id_toalha", dump_only=True)
     codigo = fields.Str(required=True)
+    status = fields.Method("obter_status")
 
-    status = fields.Str(
-        dump_only=True
-    )
+    def obter_status(self, objeto):
+        return "Em uso" if objeto.status == "em_uso" else "Disponível"

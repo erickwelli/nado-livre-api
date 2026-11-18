@@ -1,107 +1,82 @@
 # Nado Livre API
 
-API desenvolvida para o controle de toalhas de uma escola de natação, permitindo o cadastro de funcionários, nadadores e toalhas, além do registro e consulta de movimentações.
+API REST em Flask para o sistema de controle de toalhas de uma escola de natação.
 
 ## Tecnologias
 
-* Python
-* Flask
-* Flask-SQLAlchemy
-* Marshmallow
-* SQLite
-* Postman
+- Python
+- Flask
+- Flask-SQLAlchemy
+- Marshmallow
+- SQLite
 
-## Como executar
+## Executar no Windows (CMD)
 
-### 1. Clonar o repositório
+Na pasta `nado-livre-api`, execute:
 
-```bash
-git clone https://github.com/erickwelli/nado-livre-api.git
-cd nado-livre-api
-```
-
-### 2. Criar o ambiente virtual
-
-```bash
-python -m venv venv
-```
-
-### 3. Ativar o ambiente virtual
-
-No Windows:
-
-```bash
+```cmd
+py -m venv venv
 venv\Scripts\activate
+py -m pip install -r requirements.txt
+py app.py
 ```
 
-### 4. Instalar as dependências
+A API será iniciada em `http://127.0.0.1:5000`. O banco `instance/nado_livre.db` é criado automaticamente.
 
-```bash
-pip install -r requirements.txt
+Para verificar, acesse `http://127.0.0.1:5000`. A API deve retornar uma mensagem de funcionamento.
+
+## Endpoints
+
+| Método | Endpoint | Função |
+|---|---|---|
+| GET, POST | `/funcionarios` | Listar e cadastrar funcionários |
+| GET, PATCH, PUT, DELETE | `/funcionarios/<id>` | Consultar, editar e excluir funcionário |
+| GET, POST | `/nadadores` | Listar e cadastrar nadadores |
+| GET, PATCH, PUT, DELETE | `/nadadores/<id>` | Consultar, editar e excluir nadador |
+| GET, POST | `/toalhas` | Listar e cadastrar toalhas |
+| GET, PATCH, PUT, DELETE | `/toalhas/<id>` | Consultar, editar e excluir toalha |
+| GET | `/toalhas/disponiveis` | Listar toalhas disponíveis |
+| GET | `/toalhas/em-uso` | Listar toalhas em uso |
+| GET, POST | `/movimentacoes` | Listar movimentações e registrar retirada |
+| PUT | `/movimentacoes/<id>/devolucao` | Registrar devolução por ID da movimentação |
+| PUT | `/toalhas/<id>/devolucao` | Registrar devolução por ID da toalha |
+| GET | `/movimentacoes/em-aberto` | Listar retiradas não devolvidas |
+| GET | `/toalhas/<id>/historico` | Consultar histórico de uma toalha |
+
+## Formato dos dados
+
+Cadastro de funcionário ou nadador:
+
+```json
+{
+  "nome": "Nome de exemplo",
+  "cpf": "000.000.000-00",
+  "telefone": "(84) 90000-0000",
+  "email": "exemplo@email.com"
+}
 ```
 
-### 5. Executar a API
+Cadastro de toalha:
 
-```bash
-python app.py
+```json
+{
+  "codigo": "T001"
+}
 ```
 
-A API estará disponível em:
+Retirada:
 
-`http://127.0.0.1:5000`
+```json
+{
+  "id_funcionario": 1,
+  "id_nadador": 2,
+  "id_toalha": 1,
+  "dataHora": "2026-11-10T14:30"
+}
+```
 
-O banco de dados utilizado é o SQLite e é criado automaticamente na pasta `instance/`.
+A API controla o status da toalha. Uma retirada cria uma movimentação e altera o status para `em_uso`. A devolução preenche `data_hora_devolucao` na mesma movimentação e altera o status para `disponivel`.
 
-## Endpoints principais
+## Integração com o frontend
 
-| Método | Endpoint                        | Função                         |
-| ------ | ------------------------------- | ------------------------------ |
-| POST   | `/funcionarios`                 | Cadastrar funcionário          |
-| GET    | `/funcionarios`                 | Listar funcionários            |
-| GET    | `/funcionarios/<id>`            | Buscar funcionário             |
-| POST   | `/nadadores`                    | Cadastrar nadador              |
-| GET    | `/nadadores`                    | Listar nadadores               |
-| GET    | `/nadadores/<id>`               | Buscar nadador                 |
-| POST   | `/toalhas`                      | Cadastrar toalha               |
-| GET    | `/toalhas`                      | Listar toalhas                 |
-| GET    | `/toalhas/<id>`                 | Buscar toalha                  |
-| GET    | `/toalhas/disponiveis`          | Listar toalhas disponíveis     |
-| GET    | `/toalhas/em-uso`               | Listar toalhas em uso          |
-| POST   | `/movimentacoes`                | Registrar retirada             |
-| GET    | `/movimentacoes`                | Listar movimentações           |
-| GET    | `/movimentacoes/<id>`           | Buscar movimentação            |
-| PUT    | `/movimentacoes/<id>/devolucao` | Registrar devolução            |
-| GET    | `/movimentacoes/em-aberto`      | Listar movimentações em aberto |
-| GET    | `/toalhas/<id>/historico`       | Consultar histórico da toalha  |
-
-## Dados necessários para cadastro
-
-* **Funcionário:** nome, CPF, telefone e e-mail.
-* **Nadador:** nome, CPF, telefone e e-mail.
-* **Toalha:** código. Ex: (T001)
-* **Movimentação:** ID do funcionário, ID do nadador e ID da toalha.
-* **Devolução:** não possui dados no Body; utiliza o ID da movimentação na URL.
-
-## Testes com Postman
-
-Para as requisições `POST`, utilizar:
-
-**Body → raw → JSON**
-
-Os IDs utilizados nas requisições devem corresponder aos registros existentes no banco de dados.
-
-Para requisições `GET`, não é necessário enviar dados no Body.
-
-## Funcionalidades
-
-* Cadastro de funcionários e nadadores.
-* Cadastro e consulta de toalhas.
-* Controle do status das toalhas.
-* Registro de retirada e devolução.
-* Bloqueio de retirada de toalhas que já estão em uso.
-* Consulta de toalhas disponíveis e em uso.
-* Histórico de movimentações.
-
-## Projeto acadêmico
-
-Projeto desenvolvido como atividade acadêmica para simulação do desenvolvimento de uma API.
+O frontend é executado separadamente (por exemplo, com Live Server ou `py -m http.server 5501`) e consome esta API pela URL `http://127.0.0.1:5000`. O CORS está habilitado para permitir essa comunicação durante o desenvolvimento.
